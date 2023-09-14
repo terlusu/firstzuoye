@@ -1,6 +1,6 @@
 import re
 import requests #发送请求
-from bs4 import BeautifulSoup as BS #解析页面
+from bs4 import BeautifulSoup#解析页面
 import pandas as pd
 import wordcloud#词云图
 
@@ -73,22 +73,29 @@ def get_cloud(danmu_list):
 def get_bv(pages):
 
     for page in range(pages):#获取每一页视频的bv数据
+
         page += 1#从第一页开始
-        r1 = requests.get(url='https://search.bilibili.com/all?keyword=%E6%97%A5%E6%9C%AC%E6%A0%B8%E6%B1%A1%E6%9F%93%E6%B0%B4%E6%8E%92%E6%B5%B7&from_source=webtop_search&spm_id_from=333.788&search_source=2&page={}'.format(page), headers=headers)
-        r1.encoding = 'utf-8'
-        html1 = r1.text
-        soup = BS(html1, 'xml')
-        video_list = soup.find_all("a", class_="img-anchor")
+
+        r = requests.get(url='https://search.bilibili.com/all?keyword=%E6%97%A5%E6%9C%AC%E6%A0%B8%E6%B1%A1%E6%9F%93%E6%B0%B4%E6%8E%92%E6%B5%B7&from_source=webtop_search&spm_id_from=333.788&search_source=2&page={}'.format(page), headers=headers)
+        r.encoding = 'utf-8'
+
+        html = r.text
+        soup = BeautifulSoup(html, 'xml')
+
+        shiping_list = soup.find_all("a", class_="img-anchor")#搜索所有的标签a
+
         for i in range(20):#每一页的视频数量
-            b_v = (video_list[i]).get('href')
-            bvv = b_v[25:37]
-            bv_list.append(bvv)#获取到的bv号进行保存
+
+            bv1 = (shiping_list[i]).get('href')#截取标签a的href值
+            bv2 = bv1[25:37]#截取bv号
+
+            bv_list.append(bv2)#获取到的bv号进行保存
 
     return bv_list
 
 if __name__ == "__main__":
 
-    pages = 15#一次爬20个视频 所以一共爬15页
+    pages = 1#一次爬20个视频 所以一共爬15页
     bv_list = []
     danmu_list = []
 
